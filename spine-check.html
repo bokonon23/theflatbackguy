@@ -215,6 +215,7 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 
 <script>
 (() => {
+  const R = v => Math.round(v) || 0;
   const STEPS = [
     {label:'Front of top of S1', tip:'Tap the front corner (belly side) of the top surface of the sacrum.'},
     {label:'Back of top of S1',  tip:'Tap the back corner (spinal canal side) of the top surface of the sacrum.'},
@@ -287,8 +288,8 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     const maxH = Math.min(window.innerHeight*0.8, 900);
     const fit = Math.min(boxW/img.naturalWidth, maxH/img.naturalHeight);
     scale = fit*zoom;
-    const w = Math.round(img.naturalWidth*scale), h = Math.round(img.naturalHeight*scale);
-    stage.style.maxHeight = Math.round(Math.min(img.naturalHeight*fit, maxH))+'px';
+    const w = R(img.naturalWidth*scale), h = R(img.naturalHeight*scale);
+    stage.style.maxHeight = R(Math.min(img.naturalHeight*fit, maxH))+'px';
     const dpr = window.devicePixelRatio||1;
     cv.width = w*dpr; cv.height = h*dpr; cv.style.width = w+'px'; cv.style.height = h+'px';
     ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -399,19 +400,19 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     $('typeName').style.color = t===2 ? 'var(--orange)' : 'var(--text)';
     $('typeDesc').textContent = T.desc;
     document.querySelectorAll('#types figure').forEach(f=>f.classList.toggle('hi', +f.dataset.t===t));
-    $('ssDeg').textContent = Math.round(ss)+'°';
-    $('l5Deg').textContent = Math.round(l5s1)+'°';
+    $('ssDeg').textContent = R(ss)+'°';
+    $('l5Deg').textContent = R(l5s1)+'°';
     $('tkRow').hidden = tk===null;
-    if(tk!==null) $('tkDeg').textContent = Math.round(tk)+'°' + (tk<20 ? ' · flat' : '');
+    if(tk!==null) $('tkDeg').textContent = R(tk)+'°' + (tk<20 ? ' · flat' : '');
     $('addUpper').hidden = upper;
 
     let how;
-    if(tie) how = 'Sacral slope '+Math.round(ss)+'° is right on the 35° line between Types 1–2 and Type 3, and the L5–S1 angle of '+Math.round(l5s1)+'° is 19° or less.';
-    else if(t>=3) how = 'Sacral slope '+Math.round(ss)+'° is '+(t===4?'above 45°':'between 35° and 45°')+', the Roussouly range for Type '+t+'.';
-    else how = 'Sacral slope '+Math.round(ss)+'° is below 35° (Types 1–2), and the L5–S1 angle of '+Math.round(l5s1)+'° is '+(t===2?'19° or less, which points to Type 2.':'above 19°, which points to Type 1.');
+    if(tie) how = 'Sacral slope '+R(ss)+'° is right on the 35° line between Types 1–2 and Type 3, and the L5–S1 angle of '+R(l5s1)+'° is 19° or less.';
+    else if(t>=3) how = 'Sacral slope '+R(ss)+'° is '+(t===4?'above 45°':'between 35° and 45°')+', the Roussouly range for Type '+t+'.';
+    else how = 'Sacral slope '+R(ss)+'° is below 35° (Types 1–2), and the L5–S1 angle of '+R(l5s1)+'° is '+(t===2?'19° or less, which points to Type 2.':'above 19°, which points to Type 1.');
     const near = (Math.abs(ss-35)<=3 || Math.abs(ss-45)<=3 || (ss<35 && Math.abs(l5s1-19)<=3));
     if(tk!==null){
-      how += ' Upper back (T4–T12): '+Math.round(tk)+'°. Definitions vary, but under about 20° is often described as a flat upper back' + (tk<20 ? ', which fits the flat-back pattern.' : '.');
+      how += ' Upper back (T4–T12): '+R(tk)+'°. Definitions vary, but under about 20° is often described as a flat upper back' + (tk<20 ? ', which fits the flat-back pattern.' : '.');
     }
     if(tie) how += ' Because it’s so close, I’ve used your flat upper back as a tie-break towards Type 2. That tie-break is my own rule, not a published one.';
     else if(near) how += ' This is close to a cut-off, so the next type along is also possible.' + (tk===null ? ' If you have a whole-spine scan, adding the upper back can help.' : ' Re-tap carefully at 2× or 3× zoom.');
