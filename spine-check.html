@@ -172,9 +172,11 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
           <div>
             <div class="kv"><span>Sacral slope (top of S1 vs horizontal)</span><b id="ssDeg">–</b></div>
             <div class="kv"><span>L5–S1 angle (top of L5 vs top of S1)</span><b id="l5Deg">–</b></div>
+            <div class="kv" id="tkRow" hidden><span>Upper back, T4–T12</span><b id="tkDeg">–</b></div>
           </div>
           <p class="faint" id="howDecided"></p>
           <div class="warn" id="warn" hidden></div>
+          <button type="button" class="btn ghost small" id="addUpper">+ Add the upper back (whole-spine scans)</button>
           <div class="row">
             <a class="btn small" id="save" download="my-spine-type.jpg" href="#">Save my marked-up scan</a>
             <a class="btn ghost small" href="/#type">Read about the four types</a>
@@ -187,6 +189,7 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
       <h2 style="font-size:36px">How the guess is made</h2>
       <p class="muted"><strong style="color:var(--text)">Step 1, sacral slope.</strong> Roussouly’s classification (<a href="https://doi.org/10.1097/01.brs.0000152379.54463.65">Roussouly et al., Spine, 2005</a>) splits spines by the angle of the top of the sacrum on a standing X-ray: above 45° is Type 4, 35–45° is Type 3, and below 35° is Type 1 or Type 2.</p>
       <p class="muted"><strong style="color:var(--text)">Step 2, Type 1 or Type 2.</strong> Both have a low sacral slope. A 2026 study of 102 adults found the angle between L5 and S1 separated them best: 19° or less pointed to Type 2, more than 19° to Type 1 (<a href="https://link.springer.com/article/10.1007/s00586-026-09914-0">Compagnone et al., European Spine Journal, 2026</a>). This check measures it from the top of L5 to the top of S1. That study’s exact method may differ, so treat results close to 19° as uncertain.</p>
+      <p class="muted"><strong style="color:var(--text)">Optional: the upper back.</strong> If your scan shows the whole spine, you can add T4 and T12 to measure the rounding of the upper back. Roussouly’s types are set by the sacrum, so this doesn’t override a clear result. It only acts as a tie-break when the sacral slope sits within 3° of the 35° line: a flat upper back (under 20°) with a small L5–S1 angle tips the guess to Type 2. That tie-break is my own rule, not a published one.</p>
       <p class="muted"><strong style="color:var(--text)">MRI scans</strong> are taken lying down, when the lower back usually curves less than when standing. The type from an MRI is a rougher guess than from a standing X-ray.</p>
       <h2 style="font-size:36px;margin-top:24px">No scan?</h2>
       <p class="muted">Stand side-on to a mirror or ask someone to photograph you, and compare the overall shape of your back with the <a href="/#type">four types</a>. A flat back has little hollow in the lower back and little rounding in the upper back.</p>
@@ -210,7 +213,14 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     {label:'Front of top of L5', tip:'Now the vertebra just above: tap the front corner of its top surface.'},
     {label:'Back of top of L5',  tip:'Tap the back corner of the top surface of L5.'}
   ];
-  const N = STEPS.length;
+  const UPPER = [
+    {label:'Front of top of T4', tip:'Upper back: count down from the neck. T1 is the first bone after the seven neck bones, so T4 is the fourth. Tap the front corner of its top surface.'},
+    {label:'Back of top of T4',  tip:'Tap the back corner of the top surface of T4.'},
+    {label:'Front of bottom of T12', tip:'Count up from L5: L4, L3, L2, L1, then T12. Tap the front corner of its bottom surface.'},
+    {label:'Back of bottom of T12',  tip:'Tap the back corner of the bottom surface of T12.'}
+  ];
+  let upper = false, N = 4;
+  const steps = () => upper ? STEPS.concat(UPPER) : STEPS;
   const TYPES = {
     1:{name:'Type 1', desc:'Low sacral slope with a short, low curve in the lower back. The rounding of the upper back runs long, down towards the waist.'},
     2:{name:'Type 2: the flat back', desc:'Low sacral slope with a flat lower back, and usually a flat upper back too, with little rounding between the shoulder blades. The whole spine is straighter than most.'},
@@ -245,7 +255,7 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     const i = new Image();
     i.onload = () => {
       if (objUrl) URL.revokeObjectURL(objUrl);
-      objUrl = src; img=i; pts=[]; zoom=1;
+      objUrl = src; img=i; pts=[]; zoom=1; upper=false; N=4;
       document.querySelectorAll('[data-z]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.z==='1')));
       tool.hidden=false; size(); render();
       tool.scrollIntoView({behavior:'smooth', block:'start'});
@@ -289,8 +299,9 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
   });
   cv.addEventListener('pointercancel', () => { drag=-1; downAt=null; });
 
-  $('undo').addEventListener('click', () => { pts.pop(); render(); });
-  $('reset').addEventListener('click', () => { pts=[]; render(); });
+  $('undo').addEventListener('click', () => { pts.pop(); if(pts.length<4 && upper){ upper=false; N=4; } render(); });
+  $('reset').addEventListener('click', () => { pts=[]; upper=false; N=4; render(); });
+  $('addUpper').addEventListener('click', () => { upper=true; N=8; render(); $('prompt').scrollIntoView({behavior:'smooth', block:'center'}); });
 
   const deg = r => r*180/Math.PI;
   function render(){
@@ -307,9 +318,11 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
       ctx.setLineDash([6,6]); ctx.strokeStyle='#EDE7D9'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(P[1].x,P[1].y); ctx.lineTo(P[1].x+(P[0].x-P[1].x)*1.6,P[1].y); ctx.stroke(); ctx.setLineDash([]);
     }
     if(P.length>=4) line(extend(P[3],P[2],0.6), extend(P[2],P[3],0.6), '#5FB3D6');
+    if(P.length>=6) line(extend(P[5],P[4],0.6), extend(P[4],P[5],0.6), '#F2C94C');
+    if(P.length>=8) line(extend(P[7],P[6],0.6), extend(P[6],P[7],0.6), '#F2C94C');
     P.forEach((p,i)=>{
       ctx.fillStyle='#16202A'; ctx.beginPath(); ctx.arc(p.x,p.y,9,0,7); ctx.fill();
-      ctx.fillStyle= i<2 ? '#E4703F' : '#5FB3D6'; ctx.beginPath(); ctx.arc(p.x,p.y,7,0,7); ctx.fill();
+      ctx.fillStyle= i<2 ? '#E4703F' : (i<4 ? '#5FB3D6' : '#F2C94C'); ctx.beginPath(); ctx.arc(p.x,p.y,7,0,7); ctx.fill();
       ctx.fillStyle='#16202A'; ctx.font='700 10px JetBrains Mono, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(i+1),p.x,p.y+0.5);
     });
     ui();
@@ -317,14 +330,24 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 
   function ui(){
     const list=$('pts'); list.innerHTML='';
-    STEPS.forEach((s,i)=>{ const li=document.createElement('li'); li.className = i<pts.length?'done':(i===pts.length?'now':''); li.innerHTML='<span class="dot">'+(i+1)+'</span>'+s.label; list.appendChild(li); });
+    steps().forEach((s,i)=>{ const li=document.createElement('li'); li.className = i<pts.length?'done':(i===pts.length?'now':''); li.innerHTML='<span class="dot">'+(i+1)+'</span>'+s.label; list.appendChild(li); });
     const pr=$('prompt');
-    pr.innerHTML = pts.length<N ? '<b>Point '+(pts.length+1)+' of '+N+': '+STEPS[pts.length].label+'.</b> '+STEPS[pts.length].tip
-                                : '<b>Done.</b> Here’s the best guess from your four points.';
+    const S=steps();
+    pr.innerHTML = pts.length<N ? '<b>Point '+(pts.length+1)+' of '+N+': '+S[pts.length].label+'.</b> '+S[pts.length].tip
+                                : (upper ? '<b>Done.</b> Here’s the best guess, including your upper back.' : '<b>Done.</b> Here’s the best guess from your four points.');
     const res=$('result');
-    if(pts.length<N || !img){ res.hidden=true; return; }
+    if(pts.length<4 || !img){ res.hidden=true; return; }
 
     const [s1f,s1b,l5f,l5b]=pts;
+    // Upper-back (T4-T12) angle: kyphotic when the two lines open towards the back.
+    let tk=null;
+    if(upper && pts.length>=8){
+      const [t4f,t4b,t12f,t12b]=pts.slice(4,8);
+      const b1=Math.atan2(t4b.y-t4f.y, t4b.x-t4f.x), b2=Math.atan2(t12b.y-t12f.y, t12b.x-t12f.x);
+      let d=Math.abs(deg(b2-b1)); if(d>180) d=360-d;
+      const fg=Math.hypot(t12f.x-t4f.x,t12f.y-t4f.y), bg=Math.hypot(t12b.x-t4b.x,t12b.y-t4b.y);
+      tk = fg<=bg ? d : -d;
+    }
     const msgs=[];
     // Sacral slope: the front corner of S1 sits lower than the back corner in a normal standing spine.
     const ss = deg(Math.atan2(s1f.y-s1b.y, Math.abs(s1b.x-s1f.x)));
@@ -337,8 +360,10 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     if(l5f.y>s1f.y || l5b.y>s1b.y) msgs.push('L5 should be above the sacrum. Check you tapped the top of L5, not a lower bone.');
     if(ss<0) msgs.push('The top of the sacrum slopes the wrong way. Check that point 1 is the front corner and point 2 the back corner, and that the image is upright.');
 
-    let t;
+    let t, tie=false;
     if(ss>45) t=4; else if(ss>=35) t=3; else t = (l5s1<=19 ? 2 : 1);
+    // Tie-break near the 35° line: a flat upper back and a small L5-S1 angle point to Type 2.
+    if(tk!==null && ss>=32 && ss<=38 && tk<20 && l5s1<=19 && t!==2){ t=2; tie=true; }
     const T=TYPES[t];
     $('typeName').textContent = T.name;
     $('typeName').style.color = t===2 ? 'var(--orange)' : 'var(--text)';
@@ -346,12 +371,20 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     document.querySelectorAll('#types figure').forEach(f=>f.classList.toggle('hi', +f.dataset.t===t));
     $('ssDeg').textContent = Math.round(ss)+'°';
     $('l5Deg').textContent = Math.round(l5s1)+'°';
+    $('tkRow').hidden = tk===null;
+    if(tk!==null) $('tkDeg').textContent = Math.round(tk)+'°' + (tk<20 ? ' · flat' : '');
+    $('addUpper').hidden = upper;
 
     let how;
-    if(t>=3) how = 'Sacral slope '+Math.round(ss)+'° is '+(t===4?'above 45°':'between 35° and 45°')+', the Roussouly range for Type '+t+'.';
+    if(tie) how = 'Sacral slope '+Math.round(ss)+'° is right on the 35° line between Types 1–2 and Type 3, and the L5–S1 angle of '+Math.round(l5s1)+'° is 19° or less.';
+    else if(t>=3) how = 'Sacral slope '+Math.round(ss)+'° is '+(t===4?'above 45°':'between 35° and 45°')+', the Roussouly range for Type '+t+'.';
     else how = 'Sacral slope '+Math.round(ss)+'° is below 35° (Types 1–2), and the L5–S1 angle of '+Math.round(l5s1)+'° is '+(t===2?'19° or less, which points to Type 2.':'above 19°, which points to Type 1.');
     const near = (Math.abs(ss-35)<=3 || Math.abs(ss-45)<=3 || (ss<35 && Math.abs(l5s1-19)<=3));
-    if(near) how += ' This is close to a cut-off, so the next type along is also possible. Re-tap carefully at 2× or 3× zoom.';
+    if(tk!==null){
+      how += ' Upper back (T4–T12): '+Math.round(tk)+'°. Definitions vary, but under about 20° is often described as a flat upper back' + (tk<20 ? ', which fits the flat-back pattern.' : '.');
+    }
+    if(tie) how += ' Because it’s so close, I’ve used your flat upper back as a tie-break towards Type 2. That tie-break is my own rule, not a published one.';
+    else if(near) how += ' This is close to a cut-off, so the next type along is also possible.' + (tk===null ? ' If you have a whole-spine scan, adding the upper back can help.' : ' Re-tap carefully at 2× or 3× zoom.');
     if(kind==='m') how += ' This is from an MRI taken lying down, so it’s a rougher guess than a standing X-ray.';
     $('howDecided').textContent = how;
     const warn=$('warn'); warn.hidden=!msgs.length; warn.textContent=msgs.join(' ');
