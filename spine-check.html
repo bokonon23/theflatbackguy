@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Spine-shape check | The Flat Back Guy</title>
-<meta name="description" content="Is your back flatter than most? A two-minute curiosity check from one side-on photo. The photo never leaves your phone. Not a diagnosis.">
-<meta property="og:title" content="Is your back flatter than most?">
-<meta property="og:description" content="A two-minute spine-shape check from one side-on photo. Your photo never leaves your phone.">
+<meta name="description" content="Which Roussouly spine type might you be? An experimental check from one side-on photo. The photo never leaves your phone. Not a diagnosis.">
+<meta property="og:title" content="Which spine type might you be?">
+<meta property="og:description" content="An experimental Roussouly spine-type check from one side-on photo. Your photo never leaves your phone.">
 <meta property="og:image" content="https://theflatbackguy.com/media/hero.jpg">
 <meta name="theme-color" content="#16202A">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -51,6 +51,19 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 .result h3{font-size:26px}
 .big{font-family:var(--display);font-weight:700;font-size:44px;line-height:1}
 .warn{border:1px solid var(--orange);color:#F2B99E;border-radius:12px;padding:12px 14px;font-size:16px}
+.bands{position:relative;height:16px;border-radius:8px;overflow:hidden;display:flex}
+.bands span{height:100%}
+.bwrap{position:relative}
+.bwrap .mark{position:absolute;top:-6px;width:4px;height:28px;background:var(--text);border-radius:2px;transform:translateX(-2px);box-shadow:0 0 0 2px var(--bg)}
+.btick{position:relative;height:18px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+.btick span{position:absolute;transform:translateX(-50%)}
+.types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.types figure{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.types figure.hi{border:2px solid var(--blue)}
+.types figcaption{margin-top:6px;font-family:var(--mono);font-size:11px}
+.types svg{width:100%;height:auto;max-height:150px}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:16px;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 0}
+.kv b{color:var(--text);font-family:var(--mono);font-weight:400}
 [hidden]{display:none !important}
 </style>
 </head>
@@ -71,10 +84,10 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 <main>
 <div class="page-head">
   <div class="wrap stack">
-    <div class="eyebrow">Spine-shape check · beta</div>
-    <h1>Is your back flatter than most?</h1>
-    <p class="lede">A two-minute curiosity check from one side-on photo. You tap four points along your back and it estimates how curved your lower and upper back look.</p>
-    <p class="warn"><b>Not a diagnosis.</b> Only an X-ray can measure your spine type. Photos are affected by clothing, posture and camera angle. If you have back pain or leg symptoms, see a physio or GP.</p>
+    <div class="eyebrow">Spine-type check · experimental</div>
+    <h1>Which spine type might you be?</h1>
+    <p class="lede">Roussouly sorts spines into four types, mainly by the angle of the sacrum, the bone at the base of your spine. This check estimates that angle from the skin over your sacrum in one side-on photo, then shows which type range it falls in.</p>
+    <p class="warn"><b>Experimental, not a diagnosis.</b> Roussouly types are measured on X-ray, from the bone. A photo only shows skin, and nobody has yet shown how closely the skin angle matches the X-ray angle. Treat the result as a conversation starter. If you have back pain or leg symptoms, see a physio or GP.</p>
   </div>
 </div>
 
@@ -82,19 +95,18 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
   <div class="wrap stack" style="gap:32px">
 
     <div class="steps" aria-label="How to take the photo">
-      <div class="step"><div class="n">01 · STAND</div><h3>Side-on, relaxed</h3><p class="muted">Stand as you normally do, arms relaxed by your sides or folded in front. Don’t pose or suck in.</p></div>
-      <div class="step"><div class="n">02 · FRAME</div><h3>Neck to buttocks</h3><p class="muted">Bare back or a fitted top. The whole back from neck to buttocks must be in the photo.</p></div>
-      <div class="step"><div class="n">03 · CAMERA</div><h3>Level, at hip height</h3><p class="muted">About 2 m away, straight side-on, not tilted. Ask a friend, or use a timer.</p></div>
+      <div class="step"><div class="n">01 · STAND</div><h3>Side-on, relaxed</h3><p class="muted">Stand as you normally do, arms folded in front so they don’t hide your back. Don’t pose or suck in.</p></div>
+      <div class="step"><div class="n">02 · SHOW THE SACRUM</div><h3>Neck to buttock crease</h3><p class="muted">Bare back, with your waistband lowered a few centimetres so the flat bony area above the buttocks and the top of the crease are visible.</p></div>
+      <div class="step"><div class="n">03 · CAMERA</div><h3>Level, at hip height</h3><p class="muted">About 2 m away, straight side-on and not tilted. A tilted phone tilts the result, so prop it on something level or use a timer.</p></div>
     </div>
 
     <div class="panel stack" id="start">
       <h2 style="font-size:32px">Your photo stays on your phone</h2>
       <p class="muted">The check runs entirely in your browser. Your photo isn’t uploaded, sent or stored anywhere, and it’s gone when you close the page.</p>
-      <label class="check"><input type="checkbox" id="agree"> I’m 18 or over, this is a photo of me (or of someone who has agreed), and I understand this is not a diagnosis.</label>
+      <label class="check"><input type="checkbox" id="agree"> I’m 18 or over, this is a photo of me (or of someone who has agreed), and I understand this is experimental and not a diagnosis.</label>
       <div class="row">
         <label class="btn disabled" id="pickBtn" for="file" tabindex="0" role="button" aria-disabled="true">Choose or take a photo</label>
         <input type="file" id="file" accept="image/*" hidden disabled>
-        <button type="button" class="btn ghost" id="demoBtn">Try it on my photo</button>
       </div>
     </div>
 
@@ -115,29 +127,47 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
           <button type="button" class="btn ghost small" id="reset">Start again</button>
           <button type="button" class="btn ghost small" id="newPhoto">New photo</button>
         </div>
-        <p class="faint">Tip: drag a point to fine-tune it. On a phone, pinch with two fingers to zoom in for accuracy.</p>
+        <p class="faint">Tip: drag a point to fine-tune it. On a phone, pinch with two fingers to zoom in.</p>
 
         <div class="stack result" id="result" hidden>
           <div class="scale">
-            <h3>Lower back curve</h3>
-            <div class="big" id="lumbarDeg">–</div>
-            <div class="bar"><span class="ref" id="lumbarRef"></span><span class="mark" id="lumbarMark"></span></div>
-            <div class="ticks"><span>0° FLAT</span><span>40°</span><span>80°+</span></div>
-            <p id="lumbarText"></p>
+            <h3>Sacrum angle, from the skin</h3>
+            <div class="big" id="ssDeg">–</div>
+            <div class="bwrap">
+              <div class="bands" aria-hidden="true">
+                <span style="width:50%;background:var(--blue)"></span>
+                <span style="width:20%;background:#7E8B97"></span>
+                <span style="width:30%;background:var(--orange)"></span>
+              </div>
+              <span class="mark" id="ssMark"></span>
+            </div>
+            <div class="btick" aria-hidden="true"><span style="left:0;transform:none">10°</span><span style="left:50%">35°</span><span style="left:70%">45°</span><span style="left:100%;transform:translateX(-100%)">60°</span></div>
+            <p id="ssText"></p>
           </div>
-          <div class="scale">
-            <h3>Upper back curve</h3>
-            <div class="big" id="thoracicDeg">–</div>
-            <div class="bar"><span class="ref" id="thoracicRef"></span><span class="mark" id="thoracicMark"></span></div>
-            <div class="ticks"><span>0° FLAT</span><span>40°</span><span>80°+</span></div>
-            <p id="thoracicText"></p>
+
+          <div class="types" id="types" aria-label="The four Roussouly types">
+            <figure data-t="1"><svg viewBox="0 0 60 140" aria-hidden="true"><path d="M30 12 C12 42 12 82 25 97 Q33 105 30 110" fill="none" stroke="#EDE7D9" stroke-width="4" stroke-linecap="round"/><line x1="30" y1="110" x2="19" y2="129" stroke="#E4703F" stroke-width="6" stroke-linecap="round"/><circle cx="30" cy="8" r="6" fill="#EDE7D9"/></svg><figcaption>TYPE 1</figcaption></figure>
+            <figure data-t="2"><svg viewBox="0 0 60 140" aria-hidden="true"><path d="M30 12 C26 45 27 82 30 110" fill="none" stroke="#EDE7D9" stroke-width="4" stroke-linecap="round"/><line x1="30" y1="110" x2="21" y2="130" stroke="#E4703F" stroke-width="6" stroke-linecap="round"/><circle cx="30" cy="8" r="6" fill="#EDE7D9"/></svg><figcaption>TYPE 2</figcaption></figure>
+            <figure data-t="3"><svg viewBox="0 0 60 140" aria-hidden="true"><path d="M30 12 C17 35 19 60 30 72 C41 84 40 100 30 110" fill="none" stroke="#EDE7D9" stroke-width="4" stroke-linecap="round"/><line x1="30" y1="110" x2="16" y2="127" stroke="#E4703F" stroke-width="6" stroke-linecap="round"/><circle cx="30" cy="8" r="6" fill="#EDE7D9"/></svg><figcaption>TYPE 3</figcaption></figure>
+            <figure data-t="4"><svg viewBox="0 0 60 140" aria-hidden="true"><path d="M30 12 C21 30 21 50 32 62 C47 78 44 100 30 110" fill="none" stroke="#EDE7D9" stroke-width="4" stroke-linecap="round"/><line x1="30" y1="110" x2="13" y2="124" stroke="#E4703F" stroke-width="6" stroke-linecap="round"/><circle cx="30" cy="8" r="6" fill="#EDE7D9"/></svg><figcaption>TYPE 4</figcaption></figure>
           </div>
-          <p class="faint"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--orange);vertical-align:-1px"></span> my flat back, measured the same way &nbsp; <span style="display:inline-block;width:4px;height:14px;background:var(--text);vertical-align:-2px"></span> you</p>
-          <div class="warn" id="slumpWarn" hidden>Your lower back curves outwards in this photo. That usually means slumping or a tilted camera. Stand relaxed and upright, then try a new photo.</div>
-          <p class="faint">Beta: the angles come from the curve through your tapped points, so a few pixels’ difference in a tap can move them by several degrees. I’m still collecting reference photos of different spine shapes, so there are no “typical” ranges yet. It can’t tell you your Roussouly type.</p>
+          <p class="faint" style="margin-top:-6px">Simplified drawings, facing right. Orange is the sacrum.</p>
+
+          <div id="lowHint" class="stack" style="gap:8px" hidden>
+            <h3>Type 1 or Type 2?</h3>
+            <p class="muted">Both have a low sacral angle, so the shape above it decides. <b style="color:var(--text)">Type 1:</b> a short, low hollow just above the buttocks, with the rounding of the upper back running down towards the waist. <b style="color:var(--text)">Type 2:</b> little hollow and little rounding, so the whole back looks fairly straight. Compare your traced line with the drawings.</p>
+          </div>
+
+          <div>
+            <div class="kv"><span>Lower-back hollow (points 2–3–4)</span><b id="lumbarDeg">–</b></div>
+            <div class="kv"><span>Upper-back rounding (points 1–2–3)</span><b id="thoracicDeg">–</b></div>
+          </div>
+
+          <div class="warn" id="slumpWarn" hidden></div>
+          <p class="faint">How it’s worked out: the angle between the line from point 4 to point 5 and the vertical, compared with Roussouly’s X-ray cut-offs (below 35° for Types 1–2, 35–45° for Type 3, above 45° for Type 4). A few pixels’ difference in a tap can move it by several degrees, so tap carefully and try it more than once.</p>
           <div class="row">
             <a class="btn small" id="save" download="my-spine-check.jpg" href="#">Save my traced photo</a>
-            <a class="btn ghost small" href="running.html">Read the flat-back deep dives</a>
+            <a class="btn ghost small" href="/#type">Read about the four types</a>
           </div>
         </div>
       </div>
@@ -145,8 +175,9 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 
     <div class="stack narrow">
       <h2 style="font-size:36px">How it works</h2>
-      <p class="muted">Your four points mark the base of the neck, the most rounded point of the upper back, the deepest point of the lower back and the back of the buttocks. The check fits a curve through each set of three and works out how many degrees it bends. A flat back gives small angles, because there’s little curve to measure.</p>
-      <p class="muted">Skin and muscle sit over the spine, so a photo shows the shape of your back, not your bones. Use it to get curious, then read about <a href="/#type">the four spine types</a>.</p>
+      <p class="muted">Roussouly’s classification (<a href="https://doi.org/10.1097/01.brs.0000152379.54463.65">Roussouly et al., Spine, 2005</a>) is based on the sacral slope: the angle of the top of the sacrum on a standing side-on X-ray. Below 35° the lower back tends to be flatter (Types 1 and 2), 35–45° is the balanced Type 3, and above 45° is the deep curve of Type 4.</p>
+      <p class="muted">An X-ray measures the top surface of the sacrum. This check measures the slope of the skin over the back of the sacrum instead, which is a stand-in, not the same thing. The back of the sacrum isn’t exactly square to its top surface, and soft tissue varies from person to person. That’s why it’s labelled experimental.</p>
+      <p class="muted">To make it better, I’m looking for people who know their Roussouly type from an X-ray to try it. Message <a href="https://www.instagram.com/theflatbackguy/">@theflatbackguy</a> if that’s you.</p>
     </div>
   </div>
 </section>
@@ -154,7 +185,7 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 
 <footer class="site-foot">
   <div class="wrap">
-    <span>A curiosity tool, not medical advice. Your photo never leaves your device.</span>
+    <span>An experimental curiosity tool, not medical advice. Your photo never leaves your device.</span>
     <span>© 2026 The Flat Back Guy</span>
   </div>
 </footer>
@@ -162,16 +193,15 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
 <script>
 (() => {
   const STEPS = [
-    {k:'neck',  label:'Base of the neck',  tip:'Tap the bony bump where your neck meets your shoulders.'},
-    {k:'upper', label:'Upper back',        tip:'Tap the point where your upper back sticks out furthest.'},
-    {k:'lower', label:'Lower back',        tip:'Tap the deepest point of the hollow above your waistband. If it’s flat, tap the middle.'},
-    {k:'seat',  label:'Buttocks',          tip:'Tap the point where your buttocks stick out furthest.'}
+    {label:'Base of the neck', tip:'Tap the bony bump where your neck meets your shoulders.'},
+    {label:'Upper back',       tip:'Tap the point where your upper back sticks out furthest.'},
+    {label:'Lower back',       tip:'Tap the deepest point of the hollow in your lower back. If it’s flat, tap the middle.'},
+    {label:'Top of the sacrum',tip:'Tap where the hollow ends and the flat bony area above the buttocks begins, roughly level with the dimples at the base of the back.'},
+    {label:'Top of the buttock crease', tip:'Tap the top of the crease between the buttocks. The line from point 4 to here follows your sacrum.'}
   ];
-  // Bruce's flat back (Type 2), measured with this tool on media/check-demo.jpg
-  const REF = { lumbar:37, thoracic:33 };
-
+  const N = STEPS.length;
   const $ = id => document.getElementById(id);
-  const agree=$('agree'), file=$('file'), pick=$('pickBtn'), demo=$('demoBtn');
+  const agree=$('agree'), file=$('file'), pick=$('pickBtn');
   const tool=$('tool'), cv=$('cv'), ctx=cv.getContext('2d');
   let img=null, pts=[], facing=null, drag=-1, scale=1, objUrl=null;
 
@@ -181,28 +211,25 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     pick.setAttribute('aria-disabled', String(!agree.checked));
   });
   pick.addEventListener('keydown', e => { if ((e.key==='Enter'||e.key===' ') && agree.checked) { e.preventDefault(); file.click(); } });
-  file.addEventListener('change', () => { const f=file.files && file.files[0]; if (f) load(URL.createObjectURL(f), true); file.value=''; });
-  demo.addEventListener('click', () => load('media/check-demo.jpg', false));
+  file.addEventListener('change', () => { const f=file.files && file.files[0]; if (f) load(URL.createObjectURL(f)); file.value=''; });
   $('newPhoto').addEventListener('click', () => { tool.hidden=true; $('start').scrollIntoView({behavior:'smooth'}); });
 
-  function load(src, isBlob){
+  function load(src){
     const i = new Image();
     i.onload = () => {
       if (objUrl) URL.revokeObjectURL(objUrl);
-      objUrl = isBlob ? src : null;
-      img=i; pts=[]; facing=null; setFacing(null);
+      objUrl = src; img=i; pts=[]; setFacing(null);
       tool.hidden=false; size(); render();
       tool.scrollIntoView({behavior:'smooth', block:'start'});
     };
-    i.onerror = () => alertMsg('That photo couldn’t be opened. Try a JPEG or PNG.');
+    i.onerror = () => { tool.hidden=false; $('prompt').textContent='That photo couldn’t be opened. Try a JPEG or PNG.'; };
     i.src = src;
   }
-  function alertMsg(t){ $('prompt').textContent=t; }
 
   function size(){
     if(!img) return;
     const maxW = $('stage').clientWidth || 600;
-    const maxH = Math.min(window.innerHeight*0.8, 900);
+    const maxH = Math.min(window.innerHeight*0.85, 1000);
     scale = Math.min(maxW/img.naturalWidth, maxH/img.naturalHeight);
     const w = Math.round(img.naturalWidth*scale), h = Math.round(img.naturalHeight*scale);
     const dpr = window.devicePixelRatio||1;
@@ -217,7 +244,7 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
   cv.addEventListener('pointerdown', e => {
     if(!img) return; const p=toImg(e); const h=hit(p);
     if(h>=0){ drag=h; cv.setPointerCapture(e.pointerId); return; }
-    if(pts.length<4){ pts.push(p); drag=pts.length-1; cv.setPointerCapture(e.pointerId); if(pts.length===2 && facing===null) guessFacing(); render(); }
+    if(pts.length<N){ pts.push(p); drag=pts.length-1; cv.setPointerCapture(e.pointerId); if(pts.length===2 && facing===null) guessFacing(); render(); }
   });
   cv.addEventListener('pointermove', e => { if(drag<0) return; pts[drag]=toImg(e); render(); });
   const end = () => { drag=-1; };
@@ -228,32 +255,43 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
   $('faceL').addEventListener('click', () => { setFacing('L'); render(); });
   $('faceR').addEventListener('click', () => { setFacing('R'); render(); });
   function setFacing(f){ facing=f; $('faceL').setAttribute('aria-pressed', String(f==='L')); $('faceR').setAttribute('aria-pressed', String(f==='R')); }
-  // The back edge is usually on the side away from the face: guess from where the points sit in the frame.
+  // Points on the back usually sit on the side of the frame away from the face.
   function guessFacing(){ const mx=(pts[0].x+pts[1].x)/2; setFacing(mx < img.naturalWidth/2 ? 'R' : 'L'); }
+  const backX = () => facing==='R' ? -1 : 1; // facing right means the back is on the left
 
-  // Bend of the circular arc through three points, in degrees, and whether the middle point
-  // bulges backwards (out) or sits inwards (a hollow).
+  // Bend of the circular arc through three points (degrees), and whether the middle point bulges backwards.
   function arc(a,b,c){
     const cx=c.x-a.x, cy=c.y-a.y, L=Math.hypot(cx,cy); if(L<1) return null;
     const t=((b.x-a.x)*cx+(b.y-a.y)*cy)/(L*L);
     const dx=b.x-(a.x+t*cx), dy=b.y-(a.y+t*cy), d=Math.hypot(dx,dy);
-    const backX = facing==='R' ? -1 : 1; // facing right means the back is on the left
-    return {deg: 4*Math.atan(2*d/L)*180/Math.PI, out: dx*backX>0};
+    return {deg: 4*Math.atan(2*d/L)*180/Math.PI, out: dx*backX()>0};
+  }
+  // Angle of the sacral skin line from vertical; positive when it slopes backwards as it goes down.
+  function sacral(a,b){
+    const vx=b.x-a.x, vy=b.y-a.y; if(vy<=0) return null;
+    return Math.atan2(vx*backX(), vy)*180/Math.PI;
   }
 
   function render(){
     if(!img) return;
     const w=img.naturalWidth*scale, h=img.naturalHeight*scale;
     ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
-    if(pts.length>1){
-      ctx.lineCap='round'; ctx.lineJoin='round';
-      const sp = spline(pts.map(p=>({x:p.x*scale,y:p.y*scale})));
-      for(const [col,lw] of [['#16202A',9],['#E4703F',5]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); sp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke(); }
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    const spinePts = pts.slice(0,4).map(p=>({x:p.x*scale,y:p.y*scale}));
+    if(spinePts.length>1){
+      const sp = spline(spinePts);
+      for(const [col,lw] of [['#16202A',9],['#EDE7D9',5]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); sp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.stroke(); }
+    }
+    if(pts.length===5){
+      const a={x:pts[3].x*scale,y:pts[3].y*scale}, b={x:pts[4].x*scale,y:pts[4].y*scale};
+      for(const [col,lw] of [['#16202A',11],['#E4703F',7]]){ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+      // vertical reference through point 4
+      ctx.setLineDash([6,6]); ctx.strokeStyle='#EDE7D9'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(a.x,a.y+Math.hypot(b.x-a.x,b.y-a.y)*1.1); ctx.stroke(); ctx.setLineDash([]);
     }
     pts.forEach((p,i)=>{
       const x=p.x*scale, y=p.y*scale;
       ctx.fillStyle='#16202A'; ctx.beginPath(); ctx.arc(x,y,13,0,7); ctx.fill();
-      ctx.fillStyle='#5FB3D6'; ctx.beginPath(); ctx.arc(x,y,10,0,7); ctx.fill();
+      ctx.fillStyle= i>=3 ? '#E4703F' : '#5FB3D6'; ctx.beginPath(); ctx.arc(x,y,10,0,7); ctx.fill();
       ctx.fillStyle='#16202A'; ctx.font='700 12px JetBrains Mono, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(i+1),x,y+0.5);
     });
     ui();
@@ -268,40 +306,41 @@ button.btn{font:inherit;font-weight:600;font-size:18px;cursor:pointer}
     out.push(P[P.length-1]); return out;
   }
 
-  const pos = v => Math.max(0, Math.min(100, v/80*100));
-  function compare(you, me, part){
-    const diff = Math.round(you - me);
-    if (Math.abs(diff) <= 8) return 'Your '+part+' looks <b style="color:var(--orange)">about as flat as mine</b>.';
-    return diff < 0
-      ? 'Your '+part+' looks <b style="color:var(--blue)">'+(-diff)+'° flatter than mine</b>.'
-      : 'Your '+part+' looks <b>'+diff+'° more curved than mine</b>.';
-  }
+  const pos = v => Math.max(0, Math.min(100, (v-10)/50*100)); // 10°..60° scale
 
   function ui(){
     const list=$('pts'); list.innerHTML='';
     STEPS.forEach((s,i)=>{ const li=document.createElement('li'); li.className = i<pts.length?'done':(i===pts.length?'now':''); li.innerHTML='<span class="dot">'+(i+1)+'</span>'+s.label; list.appendChild(li); });
     const pr=$('prompt');
-    if(pts.length<4){ const s=STEPS[pts.length]; pr.innerHTML='<b>Point '+(pts.length+1)+' of 4: '+s.label+'.</b> '+s.tip; }
+    if(pts.length<N){ const s=STEPS[pts.length]; pr.innerHTML='<b>Point '+(pts.length+1)+' of '+N+': '+s.label+'.</b> '+s.tip; }
     else if(!facing){ pr.innerHTML='<b>Last step:</b> choose which way you’re facing in the photo.'; }
     else { pr.innerHTML='<b>Done.</b> Check the facing direction below is right, then see your result.'; }
 
     const res=$('result');
-    if(pts.length<4 || !facing){ res.hidden=true; return; }
-    const [n,u,l,s]=pts;
-    const lum=arc(u,l,s), tho=arc(n,u,l);
-    if(!lum||!tho){ res.hidden=true; return; }
-    // Lower back should curve inwards (not out); upper back should curve outwards.
-    const lumDeg = lum.out ? 0 : lum.deg;
-    const thoDeg = tho.out ? tho.deg : 0;
-    $('slumpWarn').hidden = !(lum.out && lum.deg>5);
-    $('lumbarDeg').textContent = Math.round(lumDeg)+'°';
-    $('thoracicDeg').textContent = Math.round(thoDeg)+'°';
-    $('lumbarMark').style.left = pos(lumDeg)+'%';
-    $('thoracicMark').style.left = pos(thoDeg)+'%';
-    $('lumbarRef').style.left = pos(REF.lumbar)+'%';
-    $('thoracicRef').style.left = pos(REF.thoracic)+'%';
-    $('lumbarText').innerHTML = compare(lumDeg, REF.lumbar, 'lower back');
-    $('thoracicText').innerHTML = compare(thoDeg, REF.thoracic, 'upper back');
+    if(pts.length<N || !facing){ res.hidden=true; return; }
+    const [p1,p2,p3,p4,p5]=pts;
+    const ss=sacral(p4,p5), lum=arc(p2,p3,p4), tho=arc(p1,p2,p3);
+    const warn=$('slumpWarn');
+    if(ss===null || !lum || !tho){ res.hidden=true; pr.innerHTML='<b>Check your points.</b> Point 5 needs to be below point 4.'; return; }
+
+    const ssR=Math.round(ss);
+    $('ssDeg').textContent = ssR+'°';
+    $('ssMark').style.left = pos(ss)+'%';
+    $('lumbarDeg').textContent = (lum.out ? 'curves outwards' : Math.round(lum.deg)+'°');
+    $('thoracicDeg').textContent = (tho.out ? Math.round(tho.deg)+'°' : 'curves inwards');
+
+    let t, txt;
+    if(ss<35){ t=[1,2]; txt='Below 35° is the range Roussouly found for <b style="color:var(--blue)">Types 1 and 2</b>, the lower-sloped sacrum of flatter backs.'; }
+    else if(ss<=45){ t=[3]; txt='35–45° is the range Roussouly found for <b>Type 3</b>, the balanced S-curve.'; }
+    else { t=[4]; txt='Above 45° is the range Roussouly found for <b style="color:var(--orange)">Type 4</b>, the deep lower-back curve.'; }
+    $('ssText').innerHTML = txt + ' If the skin angle matched the X-ray angle, this would be your range, but that hasn’t been proven.';
+    document.querySelectorAll('#types figure').forEach(f=>f.classList.toggle('hi', t.includes(+f.dataset.t)));
+    $('lowHint').hidden = !(ss<35);
+
+    const msgs=[];
+    if(ss<5) msgs.push('Your sacrum line is close to vertical or tips forwards. That usually means the hips were tucked under, the points were misplaced, or the phone was tilted. Check points 4 and 5, or retake the photo standing relaxed.');
+    if(lum.out && lum.deg>5) msgs.push('Your lower back curves outwards in this photo, which usually means slumping. Stand relaxed and upright, then try a new photo.');
+    warn.hidden = !msgs.length; warn.textContent = msgs.join(' ');
     res.hidden=false;
     try{ $('save').href = cv.toDataURL('image/jpeg',0.9); }catch(e){}
   }
