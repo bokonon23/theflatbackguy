@@ -129,3 +129,8 @@ td:first-child{color:var(--text);font-weight:600}
 .site-foot .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between}
 .site-foot a{color:var(--faint)}
 @media (max-width:720px){.site-head{position:static}}
+
+.intro-row{display:flex;flex-wrap:wrap;gap:32px 48px;align-items:flex-start;margin-bottom:32px}
+.intro-row .sec-head{flex:999 1 460px;min-width:0}
+.intro-vid{flex:1 1 260px;max-width:320px;margin:0}
+.intro-vid video{width:100%;aspect-ratio:9/16;border-radius:16px;background:#0F161D;border:1px solid var(--line)}
